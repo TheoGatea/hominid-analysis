@@ -44,6 +44,8 @@ class TechType(Enum):
                 return TechType.M_2
             case "mode 3":
                 return TechType.M_3
+            case "mode 4":
+                return TechType.M_4
             case _:
                 raise NotImplementedError(f"no tech type {data} possible")
 
@@ -52,7 +54,9 @@ class TechType(Enum):
 class Hominid:
     species: str
     cranial_cap: float
+    body_length: float
     tech: bool
-    tech_type: TechType
+    tech_type: TechType | None
     diet: DietType
+    skull_body_ratio: float
 

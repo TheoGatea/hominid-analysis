@@ -11,3 +11,6 @@ Tips voor bijdragers:
     tool voor python reformatting of configureer een autoformatter in je editor.
     - Voor grote stukken code maak een aparte branch aan, kleine patches van
     maximaal 10 of 15 lijnen kunnen wel direct naar de main branch.
+    - Documenteer de functies die je schrijft. Zet bij de functiedeclaratie 
+    typedefinities of docstrings om te documenteren wat voor datatypes bij de
+    argumenten en uitvoer horen.

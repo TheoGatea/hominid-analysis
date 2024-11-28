@@ -1,55 +1,58 @@
 from dataclasses import dataclass
 from enum import Enum
 
-class IncisorSize(Enum):
-    SMALL = 0 
-    BIG = 1 
-    MEGADONY = 2 
-    VERY_SMALL = 3 
-    MED_LARGE = 4 
-
-class JawShape(Enum):
-    U_SHAPE = 0
-    MODERN = 1
-    CONICAL = 2
-    V_SHAPE = 3
-
-class CanineSize(Enum):
-    SMALL = 0 
-    BIG = 1
-
-class CanineShape(Enum):
-    CONICAL = 0
-    INCISIFORM = 1
-
-class EnamelType(Enum):
-    THICK = 0
-    MED_THICK = 1
-    VERY_THICK = 2
-    MED_THIN = 3
-    THIN = 4
-
 class DietType(Enum):
     OMNIVORE = 0
     DRY_FRUIT = 1
     HARD_FRUIT = 2
     CARNIVORE = 3
     SOFT_FRUIT = 4
+    
+    # returns DietType corresponding to data, throws if bad input
+    @staticmethod
+    def from_str(data: str):
+        match data:
+            case "dry fruits":
+                return DietType.DRY_FRUIT
+            case "soft fruits":
+                return DietType.SOFT_FRUIT
+            case "omnivore":
+                return DietType.OMNIVORE
+            case "carnivorous":
+                return DietType.CARNIVORE
+            case "hard fruits":
+                return DietType.HARD_FRUIT
+            case _:
+                raise NotImplementedError(f"no diet type {data} possible")
 
-class HipShape(Enum):
-    WIDE = 0
-    SLIM = 1
-    MODERN = 2
-    VERY_MODERN = 3
+class TechType(Enum):
+    M_1 = 0 
+    M_2 = 1 
+    M_3 = 2
+    M_4 = 3
+    PRIMITIVE = 4
+
+    # returns TechType corresponding to data, throws if bad input
+    @staticmethod
+    def from_str(data: str):
+        match data:
+            case "primitive":
+                return TechType.PRIMITIVE
+            case "mode 1":
+                return TechType.M_1
+            case "mode 2":
+                return TechType.M_2
+            case "mode 3":
+                return TechType.M_3
+            case _:
+                raise NotImplementedError(f"no tech type {data} possible")
+
 
 @dataclass
 class Hominid:
     species: str
-    incisor_sz: IncisorSize
-    jaw_shape: JawShape
-    canine_size: CanineSize
-    canine_shape: CanineShape
-    enamel: EnamelType
+    cranial_cap: float
+    tech: bool
+    tech_type: TechType
     diet: DietType
-    hip: HipShape
 

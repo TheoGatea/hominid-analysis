@@ -55,7 +55,6 @@ class Hominid:
     species: str
     cranial_cap: float
     body_length: float
-    tech: bool
     tech_type: TechType | None
     diet: DietType
     skull_body_ratio: float

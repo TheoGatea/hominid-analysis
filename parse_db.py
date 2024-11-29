@@ -5,7 +5,7 @@ class DataContext:
     def __init__(self, db_filename: str) -> None:
         data = pd.read_csv(db_filename)
         hominid_lst = []
-        for nm, cran_cap, ln, tech_yn, techtp, diettp in \
+        for nm, cran_cap, ht, tech_yn, techtp, diettp in \
                 zip(list(data["Genus_&_Specie"]),
                     list(data["Cranial_Capacity"]),
                     list(data["Height"]), list(data["Tecno"]),
@@ -18,10 +18,12 @@ class DataContext:
                                 tech_flag = False
                             case "likely":
                                 tech_flag = True
+                            case _:
+                                raise NotImplementedError(f"no such tech flag {tech_yn}")
                         tech_type = TechType.from_str(techtp) if tech_flag else None
                         diet_type = DietType.from_str(diettp)
-                        current_hom = Hominid(nm, float(cran_cap), float(ln), \
-                                    tech_flag, tech_type, diet_type, float(cran_cap) / float(ln))
+                        current_hom = Hominid(nm, float(cran_cap), float(ht), \
+                                    tech_type, diet_type, float(cran_cap) / float(ht))
                         hominid_lst.append(current_hom)
         self.hominids = hominid_lst
         self.raw_data = data

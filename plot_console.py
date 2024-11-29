@@ -1,5 +1,7 @@
 from typedefs import *
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
 class DataContext:
     def __init__(self, db_filename: str) -> None:
@@ -29,4 +31,29 @@ class DataContext:
         self.raw_data = data
 
 
-ctx = DataContext("evolution_data.csv")
+def disp_skull_barchart(ctx):
+    all_species = list(set([hm.species for hm in ctx.hominids]))
+    cranium_means = [np.mean([hm.cranial_cap for hm in ctx.hominids if hm.species == sp]) for sp in all_species]
+    cranium_std = [np.std([hm.cranial_cap for hm in ctx.hominids if hm.species == sp]) for sp in all_species]
+    plt.bar(all_species, cranium_means, yerr=cranium_std)
+    plt.xticks(rotation='vertical')
+    plt.show()
+
+context = DataContext("evolution_data.csv")
+print("This is the plotting console. Choose a possible plot to view or enter exit or quit to stop.")
+
+if __name__ == "__main__":
+    while True:
+        try:
+            cmd = input("> ")
+        except EOFError:
+            exit(0)                        
+        match cmd:
+            case "skull bar chart":
+                disp_skull_barchart(context)
+            case "exit" | "quit":
+                exit(0)
+            case _:
+                print("no such command")
+
+

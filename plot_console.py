@@ -1,3 +1,4 @@
+from typing import List
 from typedefs import *
 import pandas as pd
 import numpy as np
@@ -31,7 +32,7 @@ class DataContext:
         self.raw_data = data
 
 
-def disp_skull_barchart(ctx):
+def disp_skull_barchart(ctx: DataContext) -> None:
     all_species = list(set([hm.species for hm in ctx.hominids]))
     cranium_means = [np.mean([hm.cranial_cap for hm in ctx.hominids if hm.species == sp]) for sp in all_species]
     cranium_std = [np.std([hm.cranial_cap for hm in ctx.hominids if hm.species == sp]) for sp in all_species]
@@ -39,21 +40,40 @@ def disp_skull_barchart(ctx):
     plt.xticks(rotation='vertical')
     plt.show()
 
+def disp_skull_dist(ctx: DataContext) -> None:
+    all_species = list(set([hm.species for hm in ctx.hominids]))
+    for sp in all_species:
+        capacities = [hm.cranial_cap for hm in ctx.hominids if hm.species == sp]
+        plt.hist(capacities, label=sp, alpha=0.5)
+    plt.legend()
+    plt.show()
+
+def disp_help(opts: List[str]) -> None:
+    print("This is the plotting console. Choose a possible plot to view or enter exit or quit to stop.")
+    print("These are the options:")
+    for o in opts:
+        print(o)
+
 context = DataContext("evolution_data.csv")
-print("This is the plotting console. Choose a possible plot to view or enter exit or quit to stop.")
+display_options = ["skull bar chart", "skull distribution"]
+disp_help(display_options)
 
 if __name__ == "__main__":
     while True:
         try:
             cmd = input("> ")
-        except EOFError:
+        except EOFError or KeyboardInterrupt:
             exit(0)                        
         match cmd:
             case "skull bar chart":
                 disp_skull_barchart(context)
+            case "skull distribution":
+                disp_skull_dist(context)
+            case "help":
+                disp_help(display_options)
             case "exit" | "quit":
                 exit(0)
             case _:
-                print("no such command")
+                print("not a possible command")
 
 

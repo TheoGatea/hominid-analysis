@@ -48,27 +48,37 @@ def disp_skull_dist(ctx: DataContext) -> None:
     plt.legend()
     plt.show()
 
+def disp_skull_body_scatter(ctx: DataContext) -> None:
+    skull_caps = [hm.cranial_cap for hm in ctx.hominids]
+    height = [hm.height for hm in ctx.hominids]
+    plt.scatter(height, skull_caps)
+    plt.xlabel("height")
+    plt.ylabel("skull capacity")
+    plt.show()
+
 def disp_help(opts: List[str]) -> None:
     print("This is the plotting console. Choose a possible plot to view or enter exit or quit to stop.")
     print("These are the options:")
     for o in opts:
         print(o)
 
-context = DataContext("evolution_data.csv")
-display_options = ["skull bar chart", "skull distribution"]
-disp_help(display_options)
 
 if __name__ == "__main__":
+    context = DataContext("evolution_data.csv")
+    display_options = ["skull bar chart", "skull distribution", "skull to body scatter"]
+    disp_help(display_options)
     while True:
         try:
             cmd = input("> ")
-        except EOFError or KeyboardInterrupt:
+        except (EOFError, KeyboardInterrupt):
             exit(0)                        
         match cmd:
             case "skull bar chart":
                 disp_skull_barchart(context)
             case "skull distribution":
                 disp_skull_dist(context)
+            case "skull to body scatter":
+                disp_skull_body_scatter(context)
             case "help":
                 disp_help(display_options)
             case "exit" | "quit":

@@ -48,13 +48,28 @@ class DataContext:
         plt.legend()
         plt.show()
 
-    def disp_skull_body_scatter(self) -> None:
+    def disp_skull_body_correlation(self) -> None:
         skull_caps = [hm.cranial_cap for hm in self.hominids]
         height = [hm.height for hm in self.hominids]
-        plt.scatter(height, skull_caps)
-        plt.xlabel("height")
-        plt.ylabel("skull capacity")
+        fig = plt.figure()
+        ax1, ax2 = fig.add_subplot(2, 1, 1), fig.add_subplot(2, 1, 2)
+        ax1.scatter(height, skull_caps)
+        ax1.set_xlabel("height")
+        ax1.set_ylabel("skull capacity")
+
+        # dont know if useful
+        # ht_sk_pairs = np.column_stack((height, skull_caps))
+        # real_r = np.corrcoef(height, skull_caps)[0, 1]
+        # bs_n, bs_r = 1000, []
+        # for _ in range(bs_n):
+        #     ht_sk_bs = ht_sk_pairs[np.random.choice(len(ht_sk_pairs), size=len(ht_sk_pairs))]
+        #     bs_ht , bs_sk = ht_sk_bs[:, 0], ht_sk_bs[:, 1]
+        #     r = np.corrcoef(bs_ht, bs_sk)[0, 1]
+        #     bs_r.append(r)
+        # ax2.hist(bs_r)
+        # ax2.axvline(real_r, color='g')
         plt.show()
+
 
 def disp_help(opts: List[str]) -> None:
     print("This is the plotting console. Choose a possible plot to view or enter exit or quit to stop.")
@@ -78,7 +93,7 @@ if __name__ == "__main__":
             case "skull distribution":
                 context.disp_skull_dist()
             case "skull to body scatter":
-                context.disp_skull_body_scatter()
+                context.disp_skull_body_correlation()
             case "help":
                 disp_help(display_options)
             case "exit" | "quit":

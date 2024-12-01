@@ -32,29 +32,29 @@ class DataContext:
         self.raw_data = data
 
 
-def disp_skull_barchart(ctx: DataContext) -> None:
-    all_species = list(set([hm.species for hm in ctx.hominids]))
-    cranium_means = [np.mean([hm.cranial_cap for hm in ctx.hominids if hm.species == sp]) for sp in all_species]
-    cranium_std = [np.std([hm.cranial_cap for hm in ctx.hominids if hm.species == sp]) for sp in all_species]
-    plt.bar(all_species, cranium_means, yerr=cranium_std)
-    plt.xticks(rotation='vertical')
-    plt.show()
+    def disp_skull_barchart(self) -> None:
+        all_species = list(set([hm.species for hm in self.hominids]))
+        cranium_means = [np.mean([hm.cranial_cap for hm in self.hominids if hm.species == sp]) for sp in all_species]
+        cranium_std = [np.std([hm.cranial_cap for hm in self.hominids if hm.species == sp]) for sp in all_species]
+        plt.bar(all_species, cranium_means, yerr=cranium_std)
+        plt.xticks(rotation='vertical')
+        plt.show()
 
-def disp_skull_dist(ctx: DataContext) -> None:
-    all_species = list(set([hm.species for hm in ctx.hominids]))
-    for sp in all_species:
-        capacities = [hm.cranial_cap for hm in ctx.hominids if hm.species == sp]
-        plt.hist(capacities, label=sp, alpha=0.5)
-    plt.legend()
-    plt.show()
+    def disp_skull_dist(self) -> None:
+        all_species = list(set([hm.species for hm in self.hominids]))
+        for sp in all_species:
+            capacities = [hm.cranial_cap for hm in self.hominids if hm.species == sp]
+            plt.hist(capacities, label=sp, alpha=0.5)
+        plt.legend()
+        plt.show()
 
-def disp_skull_body_scatter(ctx: DataContext) -> None:
-    skull_caps = [hm.cranial_cap for hm in ctx.hominids]
-    height = [hm.height for hm in ctx.hominids]
-    plt.scatter(height, skull_caps)
-    plt.xlabel("height")
-    plt.ylabel("skull capacity")
-    plt.show()
+    def disp_skull_body_scatter(self) -> None:
+        skull_caps = [hm.cranial_cap for hm in self.hominids]
+        height = [hm.height for hm in self.hominids]
+        plt.scatter(height, skull_caps)
+        plt.xlabel("height")
+        plt.ylabel("skull capacity")
+        plt.show()
 
 def disp_help(opts: List[str]) -> None:
     print("This is the plotting console. Choose a possible plot to view or enter exit or quit to stop.")
@@ -74,11 +74,11 @@ if __name__ == "__main__":
             exit(0)                        
         match cmd:
             case "skull bar chart":
-                disp_skull_barchart(context)
+                context.disp_skull_barchart()
             case "skull distribution":
-                disp_skull_dist(context)
+                context.disp_skull_dist()
             case "skull to body scatter":
-                disp_skull_body_scatter(context)
+                context.disp_skull_body_scatter()
             case "help":
                 disp_help(display_options)
             case "exit" | "quit":

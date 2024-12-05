@@ -70,6 +70,29 @@ class DataContext:
         # ax2.axvline(real_r, color='g')
         plt.show()
 
+    def group_tecno_sbr(self):
+        """
+        Groups skull-body ratios by tech_type.
+        Returns a tuple of all tech types and their corresponding grouped skull-body ratios.
+        """
+        all_tecnos = list(set([hm.tech_type for hm in self.hominids]))
+        grouped_sbrs = [[hm.skull_body_ratio for hm in self.hominids if hm.tech_type == tc] for tc in all_tecnos]
+        return all_tecnos, grouped_sbrs
+
+    def disp_sbr_tech_boxplot(self):
+        """
+        Displays a boxplot of skull-body ratios for each tech_type.
+        """
+        # Use the grouping function to get data
+        all_tecnos, grouped_sbrs = self.group_tecno_sbr()
+        
+        # Create the boxplot
+        plt.figure(figsize=(10, 6))
+        plt.boxplot(grouped_sbrs, labels=all_tecnos, vert=True)
+        plt.title("Skull to Body Ratios by Tech Type")
+        plt.xlabel("Tech Type")
+        plt.ylabel("Skull-Body Ratio")
+        plt.show()
 
 def disp_help(opts: List[str]) -> None:
     print("This is the plotting console. Choose a possible plot to view or enter exit or quit to stop.")
@@ -80,7 +103,7 @@ def disp_help(opts: List[str]) -> None:
 
 if __name__ == "__main__":
     context = DataContext("evolution_data.csv")
-    display_options = ["skull bar chart", "skull distribution", "skull to body scatter"]
+    display_options = ["skull bar chart", "skull distribution", "skull to body scatter", "sbr/technology boxplot"]
     disp_help(display_options)
     while True:
         try:
@@ -94,6 +117,8 @@ if __name__ == "__main__":
                 context.disp_skull_dist()
             case "skull to body scatter":
                 context.disp_skull_body_correlation()
+            case "sbr/technology boxplot":
+                context.disp_sbr_tech_boxplot()
             case "help":
                 disp_help(display_options)
             case "exit" | "quit":

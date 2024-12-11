@@ -3,7 +3,7 @@ from typedefs import *
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import ks_2samp
+from scipy.stats import ks_1samp, shapiro, kstest
 
 class DataContext:
     def __init__(self, db_filename: str) -> None:
@@ -44,7 +44,7 @@ class DataContext:
     def disp_skull_dist(self) -> None:
         all_species = list(set([hm.species for hm in self.hominids]))
         for sp in all_species:
-            capacities = [hm.cranial_cap for hm in self.hominids if hm.species == sp]
+            capacities = [hm.skull_body_ratio for hm in self.hominids if hm.species == sp]
             plt.hist(capacities, label=sp, alpha=0.5)
         plt.legend()
         plt.show()
@@ -95,9 +95,19 @@ class DataContext:
             ratios = [hm.skull_body_ratio for hm in self.hominids if hm.species == sp]
             mean, stdev = np.mean(ratios), np.std(ratios)
             dist = np.random.normal(mean, stdev, len(ratios))
-            (ks_stat, p) = ks_2samp(ratios, dist)
-            print(f"{sp}: {ks_stat} {p}")
+            # do both
+            (ks_stat, p) = ks_1samp(ratios, np.random.normal)
+            (ks_stat, p) = kstest(ratios, "norm")
+            print(f"{sp}: {ks_stat} {p}, len = {len(ratios)}")
 
+
+    def shapiro_wilk(self) -> None:
+        all_species = list(set([hm.species for hm in self.hominids]))
+        for sp in all_species:
+            ratios = [hm.skull_body_ratio for hm in self.hominids if hm.species == sp]
+            (shp_stat, p) = shapiro(ratios)
+            print(f"{sp}: {shp_stat}, {p}")
+            
 
 def disp_help(opts: List[str]) -> None:
     print("This is the plotting console. Choose a possible plot to view or enter exit or quit to stop.")
@@ -108,7 +118,7 @@ def disp_help(opts: List[str]) -> None:
 if __name__ == "__main__":
     context = DataContext("evolution_data.csv")
     display_options = ["skull bar chart", "skull distribution", "skull to body scatter",
-                       "sbr/technology boxplot", "sbr distribution", "ks test"]
+                       "sbr/technology boxplot", "sbr distribution", "ks test", "shapiro wilk test"]
     disp_help(display_options)
     while True:
         try:
@@ -128,6 +138,8 @@ if __name__ == "__main__":
                 context.disp_sbr_dist()
             case "ks test":
                 context.kolmogorov_smirnov()
+            case "shapiro wilk test":
+                context.shapiro_wilk()
             case "help":
                 disp_help(display_options)
             case "exit" | "quit":

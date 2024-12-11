@@ -3,6 +3,7 @@ from typedefs import *
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import ks_2samp
 
 class DataContext:
     def __init__(self, db_filename: str) -> None:
@@ -87,6 +88,17 @@ class DataContext:
         plt.legend()
         plt.show()
 
+
+    def kolmogorov_smirnov(self) -> None:
+        all_species = list(set([hm.species for hm in self.hominids]))
+        for sp in all_species:
+            ratios = [hm.skull_body_ratio for hm in self.hominids if hm.species == sp]
+            mean, stdev = np.mean(ratios), np.std(ratios)
+            dist = np.random.normal(mean, stdev, len(ratios))
+            (ks_stat, p) = ks_2samp(ratios, dist)
+            print(f"{sp}: {ks_stat} {p}")
+
+
 def disp_help(opts: List[str]) -> None:
     print("This is the plotting console. Choose a possible plot to view or enter exit or quit to stop.")
     print("These are the options:")
@@ -95,7 +107,8 @@ def disp_help(opts: List[str]) -> None:
 
 if __name__ == "__main__":
     context = DataContext("evolution_data.csv")
-    display_options = ["skull bar chart", "skull distribution", "skull to body scatter", "sbr/technology boxplot", "sbr distribution"]
+    display_options = ["skull bar chart", "skull distribution", "skull to body scatter",
+                       "sbr/technology boxplot", "sbr distribution", "ks test"]
     disp_help(display_options)
     while True:
         try:
@@ -113,6 +126,8 @@ if __name__ == "__main__":
                 context.disp_sbr_tech_boxplot()
             case "sbr distribution":
                 context.disp_sbr_dist()
+            case "ks test":
+                context.kolmogorov_smirnov()
             case "help":
                 disp_help(display_options)
             case "exit" | "quit":

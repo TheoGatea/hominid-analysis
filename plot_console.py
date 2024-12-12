@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import ks_1samp, shapiro, kstest, kruskal, norm
+import scikit_posthocs as sp
 
 class DataContext:
     def __init__(self, db_filename: str) -> None:

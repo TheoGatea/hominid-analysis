@@ -3,7 +3,7 @@ from typedefs import *
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import ks_1samp, shapiro, kstest, kruskal
+from scipy.stats import ks_1samp, shapiro, kstest, kruskal, norm
 
 class DataContext:
     def __init__(self, db_filename: str) -> None:
@@ -100,6 +100,30 @@ class DataContext:
             (ks_stat, p) = kstest(ratios, "norm")
             print(f"{sp}: {ks_stat} {p}, len = {len(ratios)}")
 
+    def plot_ecdf(self) -> None:
+        species = 'hominino Orrorin tugenencin'
+        ratios = list(set([hm.skull_body_ratio for hm in self.hominids if hm.species == species]))
+        mean, stdev = np.mean(ratios), np.std(ratios)
+        
+        # generate the ECDF for the observed data
+        ratios_sorted = np.sort(ratios)
+        ecdf = np.arange(1, len(ratios) + 1) / len(ratios)
+        
+        # generate the normal CDF
+        x_vals = np.linspace(min(ratios_sorted), max(ratios_sorted), 1000)
+        normal_cdf = norm.cdf(x_vals, loc=mean, scale=stdev)
+        ks_index = np.argmax(np.abs(ecdf - norm.cdf(ratios_sorted, loc=mean, scale=stdev)))
+
+        plt.plot(ratios_sorted, ecdf, label="Empirical CDF", marker='o', linestyle='none', markersize=3)
+        plt.plot(x_vals, normal_cdf, label="Normal CDF", color='red', lw=2)
+        plt.vlines(ratios_sorted[ks_index], ecdf[ks_index], norm.cdf(ratios_sorted[ks_index], loc=mean, scale=stdev), 
+                    color="red", linestyle="--", label="KS Stat")
+        plt.title(f"KS Test for {species}")
+        plt.xlabel("Skull-Body Ratio")
+        plt.ylabel("Cumulative Probability")
+        plt.legend()
+        plt.grid()
+        plt.show()
 
     def shapiro_wilk(self) -> None:
         all_species = list(set([hm.species for hm in self.hominids]))

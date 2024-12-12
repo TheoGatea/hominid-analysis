@@ -134,46 +134,6 @@ class DataContext:
             print(f"{sp}: {shp_stat}, {p}")
             
 
-    def kruskal_wallis_species(self) -> None:
-        sbr_per_species = {} # create dictionary
-        for hm in self.hominids:
-            species = hm.species
-            if species not in sbr_per_species:
-                sbr_per_species[species] = []
-            sbr_per_species[species].append(hm.skull_body_ratio)
-        ratios = list(sbr_per_species.values())
-        (h_stat, p) = kruskal(*ratios)
-        print(f"Kruskal-Wallis H-stat: {h_stat}, p-value: {p}")
-
-    def kruskal_wallis_spec2(self) -> None:
-        """Performs KW test between sbrs of human species within the same technology category"""
-        all_tecnos = list(set([hm.tech_type for hm in self.hominids]))
-        for tc in all_tecnos:
-            sbr_per_species = {}
-            for hm in self.hominids:
-                if hm.tech_type == tc:  # only take current techno type
-                    species = hm.species
-                    if species not in sbr_per_species:
-                        sbr_per_species[species] = []
-                    sbr_per_species[species].append(hm.skull_body_ratio)
-
-            # no kw test if not enough species in category
-            if len(sbr_per_species) < 2:
-                print(f"Not enough species within technology type {tc} for Kruskal-Wallis test.")
-                print("-" * 40)
-                continue
-
-            ratios = list(sbr_per_species.values())
-            species_names = list(sbr_per_species.keys())
-
-            (h_stat, p) = kruskal(*ratios)
-            print(f"Technology Type: {tc}")
-            print(f"Species compared: {species_names}")
-            print(f"Kruskal-Wallis H-stat: {h_stat}, p-value: {p}")
-            print("-" * 40)
-
-
-
     def kruskal_wallis_techno(self) -> None:
         """Performs Kruskal-Wallis test between sbrs of humans classified by technology types."""
         all_tecnos, ratios = self.group_tecno_sbr()
@@ -189,7 +149,7 @@ def disp_help(opts: List[str]) -> None:
 if __name__ == "__main__":
     context = DataContext("evolution_data.csv")
     display_options = ["skull bar chart", "skull distribution", "skull to body scatter",
-                       "sbr/technology boxplot", "sbr distribution", "ks test", "shapiro wilk test",
+                       "sbr/technology boxplot", "sbr distribution", "ks test", "ecdf plot", "shapiro wilk test",
                        "kw species", "kw tech type"]
     disp_help(display_options)
     while True:
@@ -210,6 +170,8 @@ if __name__ == "__main__":
                 context.disp_sbr_dist()
             case "ks test":
                 context.kolmogorov_smirnov()
+            case "ecdf plot":
+                context.plot_ecdf()
             case "shapiro wilk test":
                 context.shapiro_wilk()
             case "kw species":

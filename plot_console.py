@@ -96,9 +96,10 @@ class DataContext:
             mean, stdev = np.mean(ratios), np.std(ratios)
             dist = np.random.normal(mean, stdev, len(ratios))
             # do both
-            (ks_stat, p) = ks_1samp(ratios, np.random.normal)
-            (ks_stat, p) = kstest(ratios, "norm")
-            print(f"{sp}: {ks_stat} {p}, len = {len(ratios)}")
+            (ks_stat, _) = kstest(ratios, "norm", args=(mean, stdev))
+            ks_max = np.sqrt(- np.log(0.05 / 2) * (2 / (2 * len(ratios))))
+            print(f"{sp}: {ks_stat} {ks_max}")
+
 
     def plot_ecdf(self) -> None:
         species = 'hominino Orrorin tugenencin'

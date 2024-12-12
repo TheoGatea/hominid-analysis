@@ -140,6 +140,20 @@ class DataContext:
         all_tecnos, ratios = self.group_tecno_sbr()
         (h_stat, p) = kruskal(*ratios)
         print(f"Kruskal-Wallis H-stat: {h_stat}, p-value: {p}")
+        if p < 0.05:
+        
+            data = []
+            for tecno, ratio_list in zip(all_tecnos, ratios):
+                data.extend([(tecno, ratio) for ratio in ratio_list])
+        
+            df = pd.DataFrame(data, columns=["Technology", "Skull_to_Body_Ratio"])
+        
+        
+            posthoc = sp.posthoc_dunn(df, val_col="Skull_to_Body_Ratio", group_col="Technology", p_adjust="bonferroni")
+            print("Post Hoc Dunn's Test Results:")
+            print(posthoc)
+        else:
+            print("No significant differences detected; post hoc analysis not performed.")
 
 def disp_help(opts: List[str]) -> None:
     print("This is the plotting console. Choose a possible plot to view or enter exit or quit to stop.")

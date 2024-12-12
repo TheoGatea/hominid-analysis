@@ -74,7 +74,7 @@ class DataContext:
         
         # plot
         plt.figure(figsize=(10, 6))
-        plt.boxplot(grouped_sbrs, labels=all_tecnos, vert=True)
+        plt.boxplot(grouped_sbrs, tick_labels=all_tecnos, vert=True, patch_artist=True)
         plt.title("Skull to Body Ratios by Tech Type")
         plt.xlabel("Tech Type")
         plt.ylabel("Skull-Body Ratio")

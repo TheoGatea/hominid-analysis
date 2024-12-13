@@ -31,6 +31,7 @@ class TechType(Enum):
     M_3 = 2
     M_4 = 3
     PRIMITIVE = 4
+    NO_TECH = 5
 
     # returns TechType corresponding to data, throws if bad input
     @staticmethod
@@ -49,13 +50,31 @@ class TechType(Enum):
             case _:
                 raise NotImplementedError(f"no tech type {data} possible")
 
+    def to_string(self):
+        match self:
+            case self.PRIMITIVE:
+                return "primitive"
+            case self.M_1:
+                return "mode 1"
+            case self.M_2:
+                return "mode 2"
+            case self.M_3:
+                return "mode 3"
+            case self.M_4:
+                return "mode 4"
+            case self.NO_TECH:
+                return "no tech"
+
+    def __lt__(self, other) -> bool:
+        return self.value < other.value
+
 
 @dataclass
 class Hominid:
     species: str
     cranial_cap: float
     height: float
-    tech_type: TechType | None
+    tech_type: TechType
     diet: DietType
     skull_body_ratio: float
 

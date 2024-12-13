@@ -25,7 +25,7 @@ class DataContext:
                                 tech_flag = True
                             case _:
                                 raise NotImplementedError(f"no such tech flag {tech_yn}")
-                        tech_type = TechType.from_str(techtp) if tech_flag else None
+                        tech_type = TechType.from_str(techtp) if tech_flag else TechType.NO_TECH 
                         diet_type = DietType.from_str(diettp)
                         current_hom = Hominid(nm, float(cran_cap), float(ht), \
                                     tech_type, diet_type, float(cran_cap) / float(ht))
@@ -58,24 +58,18 @@ class DataContext:
         plt.ylabel("skull capacity")
         plt.show()
 
-    def group_tecno_sbr(self):
-        """
-        Groups skull-body ratios by tech_type.
-        Returns a tuple of all tech types and their corresponding grouped skull-body ratios.
-        """
-        all_tecnos = list(set([hm.tech_type for hm in self.hominids]))
-        grouped_sbrs = [[hm.skull_body_ratio for hm in self.hominids if hm.tech_type == tc] for tc in all_tecnos]
-        return all_tecnos, grouped_sbrs
 
-    def disp_sbr_tech_boxplot(self):
+    def disp_sbr_tech_boxplot(self) -> None:
         """
         Displays a boxplot of skull-body ratios for each tech_type.
         """
-        all_tecnos, grouped_sbrs = self.group_tecno_sbr()
+        all_tecnos = [TechType.NO_TECH, TechType.PRIMITIVE, TechType.M_1, TechType.M_2, TechType.M_3, TechType.M_4]
+        grouped_sbrs = [[hm.skull_body_ratio for hm in self.hominids if hm.tech_type == tc] for tc in all_tecnos]
+        labels = [t.to_string() for t in all_tecnos]
         
         # plot
         plt.figure(figsize=(10, 6))
-        plt.boxplot(grouped_sbrs, tick_labels=all_tecnos, vert=True, patch_artist=True)
+        plt.boxplot(grouped_sbrs, tick_labels=labels, vert=True, patch_artist=True)
         plt.title("Skull to Body Ratios by Tech Type")
         plt.xlabel("Tech Type")
         plt.ylabel("Skull-Body Ratio")
@@ -137,7 +131,8 @@ class DataContext:
 
     def kruskal_wallis_techno(self) -> None:
         """Performs Kruskal-Wallis test between sbrs of humans classified by technology types."""
-        all_tecnos, ratios = self.group_tecno_sbr()
+        all_tecnos = [TechType.NO_TECH, TechType.PRIMITIVE, TechType.M_1, TechType.M_2, TechType.M_3, TechType.M_4]
+        ratios = [[hm.skull_body_ratio for hm in self.hominids if hm.tech_type == tc] for tc in all_tecnos]
         (h_stat, p) = kruskal(*ratios)
         print(f"Kruskal-Wallis H-stat: {h_stat}, p-value: {p}")
         if p < 0.05:
@@ -165,7 +160,7 @@ if __name__ == "__main__":
     context = DataContext("evolution_data.csv")
     display_options = ["skull bar chart", "skull distribution", "skull to body scatter",
                        "sbr/technology boxplot", "sbr distribution", "ks test", "ecdf plot", "shapiro wilk test",
-                       "kw species", "kw tech type"]
+                       "kw tech type"]
     disp_help(display_options)
     while True:
         try:
@@ -189,8 +184,6 @@ if __name__ == "__main__":
                 context.plot_ecdf()
             case "shapiro wilk test":
                 context.shapiro_wilk()
-            case "kw species":
-                context.kruskal_wallis_spec2()
             case "kw tech type":
                 context.kruskal_wallis_techno()
             case "help":

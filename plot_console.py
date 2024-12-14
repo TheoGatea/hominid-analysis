@@ -149,6 +149,16 @@ class DataContext:
             print(posthoc)
         else:
             print("No significant differences detected; post hoc analysis not performed.")
+        technology_encoded = []
+        skull_to_body_ratios = []
+    
+        for i, tc in enumerate(all_tecnos):
+            technology_encoded.extend([i] * len(ratios[i]))  
+            skull_to_body_ratios.extend(ratios[i])
+    
+   
+        spearman_corr, spearman_p = spearmanr(technology_encoded, skull_to_body_ratios)
+        print(f"Spearman correlation: {spearman_corr}, p-value: {spearman_p}")
 
 def disp_help(opts: List[str]) -> None:
     print("This is the plotting console. Choose a possible plot to view or enter exit or quit to stop.")

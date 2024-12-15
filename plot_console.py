@@ -3,7 +3,7 @@ from typedefs import *
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import ks_1samp, shapiro, kstest, kruskal, norm, spearmanr
+from scipy.stats import shapiro, kstest, kruskal, norm, spearmanr, linregress
 import scikit_posthocs as sp
 
 class DataContext:
@@ -53,9 +53,13 @@ class DataContext:
     def disp_skull_body_correlation(self) -> None:
         skull_caps = [hm.cranial_cap for hm in self.hominids]
         height = [hm.height for hm in self.hominids]
+        model = linregress(height, skull_caps)
+        k, slope = model.intercept, model.slope
         plt.scatter(height, skull_caps)
+        plt.plot(height, k + slope * np.array(height), color='r')
         plt.xlabel("height")
         plt.ylabel("skull capacity")
+        plt.text(0.02, 0.5, f"r^2 = {model.rvalue**2:.2f}", fontsize=14, transform=plt.gcf().transFigure)
         plt.show()
 
 

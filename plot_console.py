@@ -3,7 +3,7 @@ from typedefs import *
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import shapiro, kstest, kruskal, norm, spearmanr, linregress
+from scipy.stats import shapiro, kstest, kruskal, norm, spearmanr, linregress, percentileofscore
 import scikit_posthocs as sp
 
 class DataContext:
@@ -93,11 +93,13 @@ class DataContext:
         for sp in all_species:
             ratios = [hm.skull_body_ratio for hm in self.hominids if hm.species == sp]
             mean, stdev = np.mean(ratios), np.std(ratios)
-            dist = np.random.normal(mean, stdev, len(ratios))
-            # do both
+            n = len(ratios)
+            ks_max = np.sqrt(- np.log(0.05 / 2) * (2 / (2 * n)))
             (ks_stat, _) = kstest(ratios, "norm", args=(mean, stdev))
-            ks_max = np.sqrt(- np.log(0.05 / 2) * (2 / (2 * len(ratios))))
-            print(f"{sp}: {ks_stat} {ks_max}")
+            bstraps = [kstest(np.random.choice(ratios, size=n), "norm", args=(mean, stdev))[0] for _ in range(1000)]
+            print(f"{sp}: {ks_stat} p = {percentileofscore(bstraps, ks_stat) / 100 * 2}")
+            if ks_stat > ks_max:
+                print(f"    KS-statistic too big, {ks_stat} > {ks_max}")
 
 
     def plot_ecdf(self) -> None:

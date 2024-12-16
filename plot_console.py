@@ -139,6 +139,9 @@ class DataContext:
         """Performs Kruskal-Wallis test between sbrs of humans classified by technology types."""
         all_tecnos = [TechType.NO_TECH, TechType.PRIMITIVE, TechType.M_1, TechType.M_2, TechType.M_3, TechType.M_4]
         ratios = [[hm.skull_body_ratio for hm in self.hominids if hm.tech_type == tc] for tc in all_tecnos]
+        only_tech_r = [[hm.skull_body_ratio for hm in self.hominids if hm.tech_type == tc] for tc in all_tecnos[2:]]
+        (h_stat, p) = kruskal(*only_tech_r)
+        print(f"For individuals who have achieved greater than primitive tech H = {h_stat}, p = {p}")
         (h_stat, p) = kruskal(*ratios)
         print(f"Kruskal-Wallis H-stat: {h_stat}, p-value: {p}")
         if p < 0.05:
